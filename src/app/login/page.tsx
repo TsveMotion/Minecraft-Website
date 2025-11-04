@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     minecraftUsername: '',
     password: '',
@@ -36,7 +38,14 @@ export default function LoginPage() {
 
       if (response.ok) {
         setSuccess(true)
-        // In a real app, you'd set a session cookie here
+        if (data.success) {
+          // Redirect to admin panel if user is admin, otherwise dashboard
+          if (data.user?.isAdmin) {
+            router.push('/admin')
+          } else {
+            router.push('/dashboard')
+          }
+        }
       } else {
         setError(data.error || 'Login failed')
       }

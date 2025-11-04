@@ -51,6 +51,20 @@ export default function RegisterPage() {
     setError(null)
     setLoading(true)
 
+    // Basic validation
+    if (!formData.email || !formData.fullName || !formData.password || !formData.confirmPassword) {
+      setError('All fields are required')
+      setLoading(false)
+      return
+    }
+
+    // Validate email domain
+    if (!formData.email.endsWith('@thestreetlyacademy.co.uk')) {
+      setError('Only @thestreetlyacademy.co.uk email addresses are allowed')
+      setLoading(false)
+      return
+    }
+
     // Validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')

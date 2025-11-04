@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
         minecraftUsername: user.minecraftUsername,
         email: user.email,
         fullName: user.fullName,
+        isAdmin: user.isAdmin || false,
       },
     })
   } catch (error) {
