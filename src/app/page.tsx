@@ -28,11 +28,11 @@ export default function Home() {
       <div className="max-w-5xl w-full space-y-8 relative z-10">
         {/* Header */}
         <div className="text-center space-y-4 animate-fade-in">
-          <h1 className="text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500">
-            TSV Network
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-blue-500">
+            Streetly SMP
           </h1>
-          <p className="text-2xl text-slate-300 font-light">
-            Premium Minecraft Experience
+          <p className="text-lg sm:text-xl md:text-2xl text-slate-300 font-light px-4">
+            Hosted & Sponsored by TSVWEB.CO.UK
           </p>
         </div>
 
@@ -45,9 +45,9 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-slate-950/60 p-6 rounded-xl border-2 border-blue-500/30 hover:border-blue-500/50 transition-all">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <code className="text-3xl font-mono text-blue-400 font-bold tracking-wider">{SERVER_IP}</code>
+            <div className="bg-slate-950/60 p-4 sm:p-6 rounded-xl border-2 border-blue-500/30 hover:border-blue-500/50 transition-all">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <code className="text-xl sm:text-2xl md:text-3xl font-mono text-blue-400 font-bold tracking-wider break-all">{SERVER_IP}</code>
                 <Button
                   onClick={copyServerIP}
                   variant="outline"
@@ -67,14 +67,14 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <p className="text-center text-slate-400">
+            <p className="text-center text-slate-400 text-sm sm:text-base px-2">
               Copy and paste into your Minecraft multiplayer server list
             </p>
           </CardContent>
         </Card>
 
         {/* Navigation Cards - Enhanced */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <Card className="bg-slate-800/40 border-slate-700/50 backdrop-blur-sm hover:border-blue-500/50 hover:bg-slate-800/60 transition-all duration-300 transform hover:-translate-y-1 shadow-xl">
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -152,10 +152,10 @@ export default function Home() {
         {/* Features Section - Enhanced */}
         <Card className="bg-slate-800/40 border-slate-700/50 backdrop-blur-sm shadow-xl">
           <CardHeader className="text-center">
-            <CardTitle className="text-white text-2xl">Why Play on TSV Network?</CardTitle>
+            <CardTitle className="text-white text-xl sm:text-2xl">Why Play on Streetly SMP?</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               <div className="text-center p-6 bg-gradient-to-br from-slate-900/60 to-slate-800/60 rounded-xl border border-slate-700/50 hover:border-blue-500/30 transition-all transform hover:-translate-y-1">
                 <div className="inline-flex p-3 bg-blue-500/20 rounded-full mb-3">
                   <Shield className="w-8 h-8 text-blue-400" />

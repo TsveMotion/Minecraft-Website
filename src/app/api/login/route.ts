@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,7 +46,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // In a real application, you would create a session here
+    // Update last login timestamp
+    await prisma.user.update({
+      where: { minecraftUsername },
+      data: { lastLoginAt: new Date() },
+    })
+
+    // Set session cookie
+    const cookieStore = cookies()
+    cookieStore.set('minecraft_username', user.minecraftUsername, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    })
+
     return NextResponse.json({
       success: true,
       message: 'Login successful',

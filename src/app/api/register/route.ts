@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { parseEmailData } from '@/lib/userUtils'
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,6 +84,9 @@ export async function POST(request: NextRequest) {
     // Hash the password with bcrypt (cost factor 12)
     const passwordHash = await bcrypt.hash(password, 12)
 
+    // Parse email to extract derived data
+    const emailData = parseEmailData(email)
+    
     // Create or update the user
     const user = await prisma.user.upsert({
       where: { minecraftUsername: registrationToken.minecraftUsername },
@@ -90,6 +94,9 @@ export async function POST(request: NextRequest) {
         email,
         passwordHash,
         fullName,
+        realName: emailData?.realName || null,
+        yearGroup: emailData?.yearGroup || null,
+        rankColor: emailData?.rankColor || null,
         verified: true,
       },
       create: {
@@ -97,6 +104,9 @@ export async function POST(request: NextRequest) {
         passwordHash,
         fullName,
         minecraftUsername: registrationToken.minecraftUsername,
+        realName: emailData?.realName || null,
+        yearGroup: emailData?.yearGroup || null,
+        rankColor: emailData?.rankColor || null,
         verified: true,
       },
     })
