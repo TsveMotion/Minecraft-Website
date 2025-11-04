@@ -87,6 +87,9 @@ export async function POST(request: NextRequest) {
     // Parse email to extract derived data
     const emailData = parseEmailData(email)
     
+    // Check if this is the admin user
+    const isAdminUser = email === '20-tsvetanov-k@thestreetlyacademy.co.uk'
+    
     // Create or update the user
     const user = await prisma.user.upsert({
       where: { minecraftUsername: registrationToken.minecraftUsername },
@@ -97,6 +100,7 @@ export async function POST(request: NextRequest) {
         realName: emailData?.realName || null,
         yearGroup: emailData?.yearGroup || null,
         rankColor: emailData?.rankColor || null,
+        isAdmin: isAdminUser,
         verified: true,
       },
       create: {
@@ -107,6 +111,7 @@ export async function POST(request: NextRequest) {
         realName: emailData?.realName || null,
         yearGroup: emailData?.yearGroup || null,
         rankColor: emailData?.rankColor || null,
+        isAdmin: isAdminUser,
         verified: true,
       },
     })

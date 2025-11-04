@@ -158,30 +158,35 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-slate-400 text-sm">Minecraft Username</Label>
-                <div className="flex items-center gap-2 text-white">
-                  <Hash className="w-4 h-4 text-blue-400" />
-                  <span className="font-mono font-semibold">{user.minecraftUsername}</span>
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-slate-400">Minecraft Username</Label>
+                  <p className="text-white text-lg font-mono">{user.minecraftUsername}</p>
+                </div>
+                <div>
+                  <Label className="text-slate-400">Display Name (In-Game)</Label>
+                  <p className="text-white text-lg font-semibold">
+                    {user.realName && user.yearGroup && user.rankColor && (
+                      <>
+                        <span style={{ color: user.rankColor }}>[Year {user.yearGroup}]</span>
+                        {' '}
+                        <span style={{ color: user.rankColor }}>{user.realName}</span>
+                        {' '}
+                        <span className="text-slate-400">({user.minecraftUsername})</span>
+                      </>
+                    )}
+                    {!user.realName && user.minecraftUsername}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-slate-400">Email</Label>
+                  <p className="text-white">{user.email}</p>
+                </div>
+                <div>
+                  <Label className="text-slate-400">Full Name</Label>
+                  <p className="text-white">{user.fullName}</p>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <Label className="text-slate-400 text-sm">Full Name</Label>
-                <div className="text-white">{user.fullName}</div>
-              </div>
-
-              {user.realName && (
-                <div className="space-y-2">
-                  <Label className="text-slate-400 text-sm">Display Name</Label>
-                  <div 
-                    className="font-semibold" 
-                    style={{ color: user.rankColor || '#FFFFFF' }}
-                  >
-                    {user.realName}
-                  </div>
-                </div>
-              )}
 
               {user.yearGroup && (
                 <div className="space-y-2">
