@@ -220,6 +220,32 @@ export default function AdminPage() {
     }
   }
 
+  const handleUnban = async (user: User) => {
+    if (!confirm(`Are you sure you want to unban ${user.minecraftUsername}?`)) {
+      return
+    }
+
+    setActionLoading({ ...actionLoading, [user.id]: 'unban' })
+    try {
+      const response = await fetch('/api/admin/unban', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ minecraftUsername: user.minecraftUsername }),
+      })
+
+      const data = await response.json()
+      if (response.ok) {
+        alert(`${user.minecraftUsername} has been unbanned`)
+      } else {
+        alert(`Error: ${data.error}`)
+      }
+    } catch (error) {
+      alert('Failed to unban player')
+    } finally {
+      setActionLoading({ ...actionLoading, [user.id]: '' })
+    }
+  }
+
   if (loading) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 flex items-center justify-center p-4">
@@ -400,6 +426,19 @@ export default function AdminPage() {
                           >
                             <Ban className="w-4 h-4 mr-1" />
                             Ban
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleUnban(user)}
+                            disabled={!!actionLoading[user.id]}
+                            className="bg-green-900/20 hover:bg-green-900/40 border-green-500/50 text-green-400"
+                          >
+                            {actionLoading[user.id] === 'unban' ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              'Unban'
+                            )}
                           </Button>
                         </div>
                       </td>

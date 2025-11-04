@@ -1,15 +1,45 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Copy, Check, Server, ExternalLink, Shield, Zap, Users } from 'lucide-react'
+import { Copy, Check, Server, ExternalLink, Shield, Zap, Users, Activity, Wifi } from 'lucide-react'
 
 const SERVER_IP = process.env.NEXT_PUBLIC_MINECRAFT_SERVER || 'Play.tsvweb.co.uk'
 
+interface ServerStatus {
+  online: boolean
+  players?: { online: number; max: number }
+  version?: string
+  ping?: number
+  error?: string
+}
+
 export default function Home() {
   const [copied, setCopied] = useState(false)
+  const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null)
+  const [statusLoading, setStatusLoading] = useState(true)
+
+  useEffect(() => {
+    fetchServerStatus()
+    const interval = setInterval(fetchServerStatus, 30000) // Update every 30s
+    return () => clearInterval(interval)
+  }, [])
+
+  const fetchServerStatus = async () => {
+    try {
+      const response = await fetch('/api/server/status')
+      if (response.ok) {
+        const data = await response.json()
+        setServerStatus(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch server status:', error)
+    } finally {
+      setStatusLoading(false)
+    }
+  }
 
   const copyServerIP = () => {
     navigator.clipboard.writeText(SERVER_IP)
@@ -36,42 +66,96 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Server IP Card - Enhanced */}
-        <Card className="bg-gradient-to-br from-blue-900/40 to-slate-800/40 border-blue-500/40 backdrop-blur-sm shadow-2xl shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-white flex items-center justify-center gap-3 text-2xl">
-              <Server className="w-8 h-8 text-blue-400" />
-              Server Address
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-slate-950/60 p-4 sm:p-6 rounded-xl border-2 border-blue-500/30 hover:border-blue-500/50 transition-all">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <code className="text-xl sm:text-2xl md:text-3xl font-mono text-blue-400 font-bold tracking-wider break-all">{SERVER_IP}</code>
-                <Button
-                  onClick={copyServerIP}
-                  variant="outline"
-                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 border-blue-500 text-white transition-all transform hover:scale-105"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-5 h-5" />
-                      Copy IP
-                    </>
-                  )}
-                </Button>
+        {/* Server Status & IP Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Server IP Card */}
+          <Card className="lg:col-span-2 bg-slate-900/70 border border-blue-500/30 backdrop-blur-md shadow-2xl shadow-blue-900/30 hover:border-blue-500/60 transition-all duration-300">
+            <CardHeader className="text-center pb-3">
+              <CardTitle className="text-white flex items-center justify-center gap-3 text-xl sm:text-2xl">
+                <Server className="w-7 h-7 text-blue-300" />
+                Server Address
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-slate-950/80 p-4 sm:p-6 rounded-xl border border-blue-500/20">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                  <code className="text-lg sm:text-2xl md:text-3xl font-mono text-white font-semibold tracking-wide text-center sm:text-left break-all">{SERVER_IP}</code>
+                  <Button
+                    onClick={copyServerIP}
+                    variant="outline"
+                    className="w-full sm:w-auto justify-center flex items-center gap-2 bg-blue-600 hover:bg-blue-700 border-blue-500 text-white transition-all transform hover:scale-105"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-5 h-5" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-5 h-5" />
+                        Copy IP
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
-            </div>
-            <p className="text-center text-slate-400 text-sm sm:text-base px-2">
-              Copy and paste into your Minecraft multiplayer server list
-            </p>
-          </CardContent>
-        </Card>
+              <div className="flex flex-wrap items-center justify-center gap-2 text-slate-300 text-xs sm:text-sm">
+                <Activity className="w-4 h-4 text-blue-300" />
+                <span>Java Edition • Bedrock (Port 19132)</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Server Status Card */}
+          <Card className="bg-slate-900/70 border border-emerald-500/30 backdrop-blur-md shadow-2xl shadow-emerald-900/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white flex items-center gap-2 text-lg">
+                <Wifi className="w-6 h-6 text-emerald-300" />
+                Server Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              {statusLoading ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400 mx-auto"></div>
+                </div>
+              ) : serverStatus?.online ? (
+                <>
+                  <div className="flex items-center justify-between text-slate-200">
+                    <span>Status</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                      <span className="text-emerald-300 font-semibold">Online</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-200">
+                    <span>Players</span>
+                    <span className="text-white font-semibold">
+                      {serverStatus.players?.online || 0}/{serverStatus.players?.max || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-200">
+                    <span>Version</span>
+                    <span className="text-white font-mono text-xs sm:text-sm">
+                      {serverStatus.version || 'N/A'}
+                    </span>
+                  </div>
+                  {serverStatus.ping && (
+                    <div className="flex items-center justify-between text-slate-200">
+                      <span>Ping</span>
+                      <span className="text-emerald-300 font-semibold">{serverStatus.ping}ms</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-4 space-y-2">
+                  <div className="w-2 h-2 bg-red-400 rounded-full mx-auto"></div>
+                  <span className="text-red-300 font-semibold">Offline</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Navigation Cards - Enhanced */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
